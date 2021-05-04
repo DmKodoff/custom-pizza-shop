@@ -1,63 +1,70 @@
 import React from 'react'
-import ConfigPizza from './ConfigPazza'
-import ThankYou from "./ThankYou";
+import PizzaConfigurator from './PizzaConfigurator'
+import { PIZZA_SETINGS } from './data'
+import ConfirmOrder from './ConfirmOrder'
+import {priceCalculation} from './Utils/utils'
+
+/* Create Inisial State for Pizza Configurator 
+{
+    size:30,
+    dough:'thick,
+    souse:'tomat',
+    cheese:[],
+    meet:[],
+    vegetables:[]
+}
+
+*/
+const defaultPizza = Object.fromEntries( PIZZA_SETINGS.map(({name, values, type }) =>
+    (type === 'radio' ? [name, values[0]] : [name, []]
+  ))
+  )
+
 
 function App() {
-    const pizzaSettings = {
-        size: {values: [30, 35], type: 'radio'},
-        dough: {values: ['thick', 'thin'], type: 'radio'},
-        souse: {values: ['tomato', 'white', 'hot'], type: 'radio'},
-        cheese: {values: ['mozzarella', 'cheddar', 'dor blue'], type: 'checkbox'},
-        vegetables: {values: ['tomato', 'mushrooms', 'pepper'], type: 'checkbox'},
-        meet: {values: ['bacon', 'pepperoni', 'ham'], type: 'checkbox'},
-    }
+  const [orderToConfirm, setOrderToConfirm] = React.useState({})
+  const [pizzaConfigSetup, setPizzaConfigSetup] = React.useState(defaultPizza)
 
-    const priceFeed = {
-        base: 200,
-        size: 50,
-        cheese: 29,
-        vegetables: 29,
-        meet: 29
-    }
+  const handlerSubmit = (order) => {
+    const price = priceCalculation(order)
+    setOrderToConfirm({
+    order,
+    price,
+    })
+  }
 
-    const initialState = Object.fromEntries(Object.entries(pizzaSettings).map(([name, {values, type}]) => (
-            type === 'radio' ? [name, values[0]] : [name, []]
-        ))
-    )
+  //noConfirm Order - whant change it
+  const handleChangeOrder = () => {
+    setPizzaConfigSetup(orderToConfirm.order)
+    setOrderToConfirm({})
+  }
 
+  //Confir the Order. Clear the order state and setup default to pizza configuration
+  const handleConfirmOrder = () => {
+    setPizzaConfigSetup(defaultPizza)
+    setOrderToConfirm({})
+  }
 
-    const [preOrder, setPreOrder] = React.useState({})
-    const [initialOrder, setInitialOrder] = React.useState(initialState)
+  //Flag for check that we have orderToConfirm
+  const isOrderToConfirm = Object.keys(orderToConfirm).length !== 0
 
-    const onSubmit = (pizzaPreOrder, price) => {
-        setPreOrder({
-            order: {...pizzaPreOrder}, price
-        })
-    }
-
-    const onChange = () => {
-        setInitialOrder(preOrder.order)
-        setPreOrder({})
-    }
-
-    const onConfirm = () => {
-        setPreOrder({})
-        setInitialOrder(initialState)
-    }
-
-
-    return (
-
-        <div style={{padding: 20}}>
-            <h1>Create your pizza</h1>
-
-            {Object.keys(preOrder).length == 0
-                ? <ConfigPizza pizzaSettings={pizzaSettings} onSubmit={onSubmit} initialState={initialOrder}
-                               priceFeed={priceFeed}/>
-                : <ThankYou preOrder={preOrder} onConfirm={onConfirm} onChange={onChange}/>
-            }
-        </div>
-    )
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Create your pizza</h1>
+      {isOrderToConfirm ? (
+        <ConfirmOrder
+          preOrder={orderToConfirm}
+          onConfirm={handleConfirmOrder}
+          onChange={handleChangeOrder}
+        />
+      ) : (
+        <PizzaConfigurator
+          onSubmit={handlerSubmit}
+          pizzaConfigSetup={pizzaConfigSetup}
+        />
+      )}
+    </div>
+  )
 }
 
 export default App
