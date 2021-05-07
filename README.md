@@ -1,16 +1,18 @@
 # ONLINE SHOP FOR PIZZA
 
+[Check it Here][1]
+
+
+
 ## Stack
 
 In this project we use
 
 ### `React + Redux + restAPI`   
 
- 
-<br>
 
 ## Description
-<br>
+
 
 ### **Client side**
 
@@ -22,18 +24,22 @@ and make an order..
 
 Admin check the orders, availibilyti for topicks and simple base acounting.
 
-<br>
 
 ## How to use
-<br>
+
 
 1. Clone repo.
 
-    ### `clone`
-    <br>
+    ### `gh repo clone DmKodoff/custom-pizza-shop`
 
-2. In the project directory, you can run:
 
+2. In the project directory, you need install and run:
+
+    ### `yarn install`
+    
     ### `yarn start`
 
+
+
+[1]: https://artem-pizza-kotov-prod.netlify.app/
 
